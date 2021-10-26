@@ -20,8 +20,19 @@ mensaje1: .asciiz "Numero plis => "
 mensaje2: .asciiz "El numero es el "
 salto: .asciiz "\n"
 dosciento: .asciiz "doscientos"
-espacio: .asciiz " " 
+espacio: .asciiz " "
+
+y: .asciiz "y "
+ 
+uno: .asciiz "uno"
+dos: .asciiz "dos"
 tres: .asciiz "tres"
+cuatro: .asciiz "cuatro"
+cinco: .asciiz "cinco"
+seis: .asciiz "seis" 
+siete: .asciiz "siete"
+ocho: .asciiz "ocho"
+nueve: .asciiz "nueve"
 
 dies: .asciiz "dies"
 veinte: .asciiz "veinte"
@@ -43,6 +54,10 @@ sietecientos: .asciiz "sietecientos"
 ochocientos: .asciiz "ochocientos"
 novecientos: .asciiz "novecientos"
 
+mil: .asciiz "mil"
+millones: .asciiz "millones"
+
+
 cadena: .space 10
 
 .text 
@@ -53,9 +68,10 @@ li $a1 10
 la $a0 cadena
 syscall 
 
-li $t0 0
+li $t0 0 # contador para moverse en cadena
+li $t4 0 # tener el numero anterior al actual
 loop:
-	li $t1 0
+	li $t1 0 #saber la cantidad de espacios entre el numero actual y el numero final
 	add $t1 $t1 $t0
 	
 	lb $t2 cadena($t0)
@@ -63,7 +79,8 @@ loop:
 	bgt $t2 0x39 finfin
 	
 	loopsig:
-		lb $t3 cadena($t1)
+		
+		lb $t3 cadena($t1) # loop interno para saber los espacios 
 	
 		beq $t3 0x00 sigpaso
 		beq $t3 0x0A sigpaso
@@ -80,13 +97,110 @@ loop:
 		beq $t1 1 normal
 		beq $t1 2 diez   
 		beq $t1 3 cientos
-		beq $t1 5 diezmiles
-		beq $t1 6 cinetosmiles
-		beq $t1 7 millones
-		beq $t1 8 diezmillones 
-		beq $t1 9 cientosmillones
+		beq $t1 4 normal #normal mil
+		beq $t1 5 diez # mil
+		beq $t1 6 cientos # mil
+		beq $t1 7 normal #millones
+		beq $t1 8 diez #millones 
+		beq $t1 9 cientos #millones
 		
+		normal:
+		
+			subi $t4 $t0 1 # $t4 es un contador para ir al numero anterior
+			lb $t5 cadena($t4) #ver si tiene un numero antes y asi saber si se print un Y o no
+			
+			subi $t5 $t5 0x30 #$t5 a numero
+			
+			beq $t2 0 ceroz #si el numero es 0 se va a la seccion de 0 y asi no se imprime la "Y"
+			beq $t5 0 noY	
+			beq $t0 0 noY
+			
+			
+			li $t4 0	#se reinicia a 0 $t4
+			print(y)
+			#num($t4)
+			
+			noY:
+			beq $t2 1 Uno
+			beq $t2 2 Dos
+			beq $t2 3 Tres
+			beq $t2 4 Cuatro
+			beq $t2 5 Cinco
+			beq $t2 6 Seis
+			beq $t2 7 Siete
+			beq $t2 8 Ocho
+			beq $t2 9 Nueve
+			
+			Uno:
+				print(uno)
+				print(espacio)
+				beq $t1 4 MIL	# si el contador $t1 es igual a 4 se va a mil
+				beq $t1 7 MILLONES # si el contador $t1 es igual a 4 se va a millones
+				b siguesigue
+			Dos:
+				print(dos)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Tres:
+				print(tres)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Cuatro:
+				print(cuatro)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Cinco:
+				print(cinco)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Seis:
+				print(seis)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Siete:
+				print(siete)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Ocho:
+				print(ocho)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+			Nueve:
+				print(nueve)
+				print(espacio)
+				beq $t1 4 MIL
+				beq $t1 7 MILLONES
+				b siguesigue
+				
+			ceroz: #dependiendo de la posicion se imprime millones o miles o nada
+				beq $t1 4 MIL 
+				beq $t1 7 MILLONES
+				b siguesigue
+			MIL: #imprime mil
+				print(mil)
+				print(espacio)
+				b siguesigue
+			MILLONES: #imprime millones
+				print(millones)
+				print(espacio)
+				b siguesigue
+								
 		diez:
+			beq $t2 0 siguesigue
 			beq $t2 1 Dies
 			beq $t2 2 Veinte
 			beq $t2 3 Treinta
@@ -134,6 +248,8 @@ loop:
 				b siguesigue
 			
 		cientos:
+			
+			beq $t2 0 siguesigue
 			beq $t2 1 Cien
 			beq $t2 2 Doscientos
 			beq $t2 3 Trescientos
@@ -180,76 +296,6 @@ loop:
 				print(espacio)
 				b siguesigue
 		
-		normal:
-			beq $t2 1 Uno
-			beq $t2 2 Dos
-			beq $t2 3 Tres
-			beq $t2 4 Cuatro
-			beq $t2 5 Cinco
-			beq $t2 6 Seis
-			beq $t2 7 Siete
-			beq $t2 8 Ocho
-			beq $t2 9 Nueve
-			
-			Uno:
-			   print(conector)
-			   print(espacio)
-			   print(uno)
-			   b siguesigue
-			
-			Dos:
-			   print(conector)
-			   print(espacio)
-			   print(dos)
-			   b siguesigue
-			   
-			Tres:
-			    print(conector)
-			   print(espacio)
-			   print(tres)
-			   b siguesigue
-			   
-			Cuatro:
-			   print(conector)
-			   print(espacio)
-			   print(cuatro)
-			   b siguesigue
-			   
-			Cinco:
-			   print(conector)
-			   print(espacio)
-			   print(cinco)
-			   b siguesigue
-			
-			Seis:
-			   print(conector)
-			   print(espacio)
-			   print(seis)
-			   b siguesigue
-			   
-			Siete:
-			   print(conector)
-			   print(espacio)
-			   print(siete)
-			   b siguesigue
-			
-			Ocho:
-			   print(conector)
-			   print(espacio)
-			   print(ocho)
-			   b siguesigue
-			
-			Nueve:
-			   print(conector)
-			   print(espacio)
-			   print(nueve)
-			   b siguesigue
-		diezmiles:
-		cinetosmiles:
-		millones:
-		diezmillones:
-		cientosmillones:
-		
 		siguesigue:
 		
 		#num($t1)
@@ -259,7 +305,8 @@ loop:
 		#print(salto)
 	
 		addi $t0 $t0 1
-	
+		
+		
 		b loop
 
 finfin:
