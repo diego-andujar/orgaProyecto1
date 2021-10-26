@@ -181,6 +181,69 @@ loop:
 				b siguesigue
 		
 		normal:
+			beq $t2 1 Uno
+			beq $t2 2 Dos
+			beq $t2 3 Tres
+			beq $t2 4 Cuatro
+			beq $t2 5 Cinco
+			beq $t2 6 Seis
+			beq $t2 7 Siete
+			beq $t2 8 Ocho
+			beq $t2 9 Nueve
+			
+			Uno:
+			   print(conector)
+			   print(espacio)
+			   print(uno)
+			   b siguesigue
+			
+			Dos:
+			   print(conector)
+			   print(espacio)
+			   print(dos)
+			   b siguesigue
+			   
+			Tres:
+			    print(conector)
+			   print(espacio)
+			   print(tres)
+			   b siguesigue
+			   
+			Cuatro:
+			   print(conector)
+			   print(espacio)
+			   print(cuatro)
+			   b siguesigue
+			   
+			Cinco:
+			   print(conector)
+			   print(espacio)
+			   print(cinco)
+			   b siguesigue
+			
+			Seis:
+			   print(conector)
+			   print(espacio)
+			   print(seis)
+			   b siguesigue
+			   
+			Siete:
+			   print(conector)
+			   print(espacio)
+			   print(siete)
+			   b siguesigue
+			
+			Ocho:
+			   print(conector)
+			   print(espacio)
+			   print(ocho)
+			   b siguesigue
+			
+			Nueve:
+			   print(conector)
+			   print(espacio)
+			   print(nueve)
+			   b siguesigue
 		diezmiles:
 		cinetosmiles:
 		millones:
