@@ -30,6 +30,7 @@ y: .asciiz "y "
 epale: .asciiz " epale "
  
 uno: .asciiz "uno"
+un: .asciiz "un"
 dos: .asciiz "dos"
 tres: .asciiz "tres"
 cuatro: .asciiz "cuatro"
@@ -100,6 +101,7 @@ li $s0 0 # contador para moverse en la cadena y ver los numeros siguientes de lo
 li $s2 0 # contador para los cientos su max es 2
 
 loop:
+	
 	li $t1 0 #saber la cantidad de espacios entre el numero actual y el numero final
 	add $t1 $t1 $t0
 	
@@ -167,23 +169,28 @@ loop:
 		beq $t1 14 cientos #millones
 		
 		normal:
-		
-			#num($t4)
-			#num($t0)
-			#addi $t4 $t0 1 # $t4 es un contador para ir al numero anterior
-			#num($t4)
+			li $s4 0
+			
 			lb $t5 cadena($t0) #ver si tiene un numero antes y asi saber si se print un Y o no
 			
+			addi $s4 $s4 -1
+			bltz $s4 menoracero
+			lb $s7 cadena($s4)
+			subi $s7 $s7 0x30
+			
+			menoracero:
 			subi $t5 $t5 0x30 #$t5 a numero
 			
+			
 			beq $t5 0 siguesigue	
+			beq $s7 0 noY
 			#beq $t0 0 noY
 			
 			
 				#se reinicia a 0 $t4
 			print(y)
 			#num($t4)
-			
+			noY:
 			beq $t2 1 Uno
 			beq $t2 2 Dos
 			beq $t2 3 Tres
@@ -195,11 +202,26 @@ loop:
 			beq $t2 9 Nueve
 			
 			Uno:
+				li $s0 0
+				li $s2 0
+				
+				add $s0 $t0 1
+				lb $s2 cadena($s0)
+
+				beq $s2 0x2E UN #ver si el siguiente caracter es un punto
+								
 				print(uno)
 				print(espacio)
-				#beq $t1 7 MIL	# si el contador $t1 es igual a 4 se va a mil
-				#beq $t1 7 MILLONES # si el contador $t1 es igual a 4 se va a millones
+				li $s0 0
+				li $s2 0
 				b siguesigue
+				
+				UN:
+					print(un)
+					print(espacio)
+					li $s0 0
+					li $s2 0
+					b siguesigue
 			Dos:
 				print(dos)
 				print(espacio)
