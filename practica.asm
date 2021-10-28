@@ -17,7 +17,7 @@ syscall
 
 .data
 mensaje1: .asciiz "Numero plis => "
-mensaje2: .asciiz "El numero es el "
+mensaje2: .asciiz "DE BOLIVARES DIGITALES con"
 salto: .asciiz "\n"
 dosciento: .asciiz "doscientos"
 espacio: .asciiz " "
@@ -69,6 +69,7 @@ novecientos: .asciiz "novecientos"
 
 mil: .asciiz "mil"
 millones: .asciiz "millones"
+millon: .asciiz "millon"
 
 
 cadena: .space 15
@@ -170,21 +171,33 @@ loop:
 		
 		normal:
 			li $s4 0
-			
+			#num($t0)
 			lb $t5 cadena($t0) #ver si tiene un numero antes y asi saber si se print un Y o no
 			
-			addi $s4 $s4 -1
+			addi $s4 $t0 -1
 			bltz $s4 menoracero
 			lb $s7 cadena($s4)
+			
 			subi $s7 $s7 0x30
+			
+			subi $t5 $t5 0x30 #$t5 a numero
+			#print(espacio)
+			#print(epale)
+			#num($t5)
+			#print(epale)
+			#num($s7)
+			#print(espacio)
+			beq $t5 0 siguesigue	
+			beq $s7 0 noY
+			
 			
 			menoracero:
 			subi $t5 $t5 0x30 #$t5 a numero
-			
-			
+			#print(epale)
+			#print(epale)
+			#num($t5)
 			beq $t5 0 siguesigue	
-			beq $s7 0 noY
-			#beq $t0 0 noY
+			beq $t0 0 noY
 			
 			
 				#se reinicia a 0 $t4
@@ -202,6 +215,8 @@ loop:
 			beq $t2 9 Nueve
 			
 			Uno:
+				beqz $t0 check
+				unopro:
 				li $s0 0
 				li $s2 0
 				
@@ -222,6 +237,23 @@ loop:
 					li $s0 0
 					li $s2 0
 					b siguesigue
+				check:
+					beq $t6 12 millonpelao
+					beq $t6 8 milpelao
+					print(uno)
+					print(espacio)
+					b siguesigue
+					
+					millonpelao:
+						print(un)
+						print(espacio)
+						print(millon)
+						print(espacio)
+						addi $t0 $t0 1
+						b siguesigue
+					milpelao:
+						b siguesigue
+					
 			Dos:
 				print(dos)
 				print(espacio)
@@ -439,16 +471,94 @@ loop:
 				b siguesigue
 		
 		comauno:
+			li $s0 0
+			li $s2 0
+			li $t5 0
+			
+			beq $t6 14 vermensaje14
+			beq $t6 13 vermensaje13
+			beq $t6 12 vermensaje12
+			
+			normalcoma:
+			print(COMA)
+			print(espacio)
 			num($t2)
+			li $s0 0
+			li $s2 0
+			li $t5 0
 			b siguesigue
+			
+			vermensaje14:
+				li $s0 4
+				vermensaje14in:
+					lb $s2 cadena($s0)
+					addi $s0 $s0 1
+					
+					beq $s2 0x2E vermensaje14in
+					
+					subi $s2 $s2 0x30
+					bnez $s2 normalcoma
+					#num($s2)
+					#print(espacio)
+					#num($s0)
+					#print(epale)
+					beq $s0 11 millonesbs
+					b vermensaje14in
+					b siguesigue
+				
+			vermensaje13:
+				li $s0 3
+					vermensaje13in:
+					lb $s2 cadena($s0)
+					addi $s0 $s0 1
+					
+					beq $s2 0x2E vermensaje13in
+					
+					subi $s2 $s2 0x30
+					bnez $s2 normalcoma
+					#num($s2)
+					#print(espacio)
+					#num($s0)
+					#print(epale)
+					beq $s0 10 millonesbs
+					b vermensaje13in
+					b siguesigue
+					
+			vermensaje12:
+				li $s0 2
+					vermensaje12in:
+					lb $s2 cadena($s0)
+					addi $s0 $s0 1
+					
+					beq $s2 0x2E vermensaje12in
+					
+					subi $s2 $s2 0x30
+					bnez $s2 normalcoma
+					#num($s2)
+					#print(espacio)
+					#num($s0)
+					#print(epale)
+					beq $s0 9 millonesbs
+					b vermensaje12in
+					b siguesigue
+					
+				millonesbs:
+					print(mensaje2)
+					print(espacio)
+					num($t2)
+					li $s0 0
+					li $s2 0
+					li $t5 0
+					b siguesigue
+					
 		comados:
 			num($t2)
 			print(slash)
 			b siguesigue
 			
 		coma:
-			print(COMA)
-			print(espacio)
+			#print(COMA)
+			#print(espacio)
 			b siguesigue
 			
 		punto:
@@ -471,9 +581,37 @@ loop:
 				beq $t1 3 catorcemillones
 				beq $t1 7 catorcemil
 				catorcemil:
+					
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					add $s0 $s0 $t0
+					Versimilono:
+						
+						subi $s0 $s0 1
+						lb $s2 cadena($s0)
+					
+						subi $s2 $s2 0x30
+						addi $s4 $s4 1
+						#
+						bnez $s2 mil1
+						beq $s4 3 nomil
+						b Versimilono
+					
+					mil1:
+					li $s0 0
+					li $s2 0
+					li $s4 0
 					print(mil)
 					print(espacio)
 					b siguesigue
+					
+					nomil:
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					b siguesigue
+					
 				catorcemillones:
 					print(millones)
 					print(espacio)
@@ -482,10 +620,40 @@ loop:
 			trece:
 				beq $t1 2 trecemillones
 				beq $t1 6 trecemil
+				
+				
 				trecemil:
+				
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					add $s0 $s0 $t0
+					Versimilono1:
+						
+						subi $s0 $s0 1
+						lb $s2 cadena($s0)
+					
+						subi $s2 $s2 0x30
+						addi $s4 $s4 1
+						#
+						bnez $s2 mil2
+						beq $s4 3 nomil2
+						b Versimilono1
+						
+					mil2:
+					li $s0 0
+					li $s2 0
+					li $s4 0
 					print(mil)
 					print(espacio)
 					b siguesigue
+					
+					nomil2:
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					b siguesigue
+					
 				trecemillones:
 					print(millones)
 					print(espacio)
@@ -494,9 +662,37 @@ loop:
 				beq $t1 1 dozezmillones
 				beq $t1 5 dozezmil
 				dozezmil:
+				
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					add $s0 $s0 $t0
+					Versimilono3:
+						
+						subi $s0 $s0 1
+						lb $s2 cadena($s0)
+					
+						subi $s2 $s2 0x30
+						addi $s4 $s4 1
+						#
+						bnez $s2 mil3
+						beq $s4 3 nomil3
+						b Versimilono3
+						
+					mil3:
+					li $s0 0
+					li $s2 0
+					li $s4 0
 					print(mil)
 					print(espacio)
 					b siguesigue
+					
+					nomil3:
+					li $s0 0
+					li $s2 0
+					li $s4 0
+					b siguesigue
+					
 				dozezmillones:
 					print(millones)
 					print(espacio)
