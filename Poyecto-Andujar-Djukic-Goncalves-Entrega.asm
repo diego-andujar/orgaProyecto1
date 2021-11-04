@@ -51,7 +51,7 @@ siete: .asciiz "siete"
 ocho: .asciiz "ocho"
 nueve: .asciiz "nueve"
 
-dies: .asciiz "dies"
+dies: .asciiz "diez"
 once: .asciiz "once"
 doce: .asciiz "doce"
 trecez: .asciiz "trece"
